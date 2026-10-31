@@ -15,12 +15,21 @@
     "incremental": true,
     "plugins": [
       {
-        "name": "next"
-      }
+        "name": "next",
+      },
+      {
+        "name": "ts-plugin-sort-import-suggestions",
+        "moveUpPatterns": ["@/", "\\.{1,2}/"],
+        "moveDownPatterns": ["^(?!@/|\\.{1,2}/)"],
+      },
+      {
+        "name": "ts-plugin-hide-deprecated",
+      },
     ],
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/app/components/*"],
+    },
   },
   "include": [
     "next-env.d.ts",
@@ -28,7 +37,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }
