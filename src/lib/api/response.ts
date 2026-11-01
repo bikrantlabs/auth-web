@@ -5,6 +5,11 @@ export type ApiResponse<T> = {
   data: T;
 };
 
+export type TokenPair = {
+  accessToken: string;
+  refreshToken: string;
+};
+
 export type User = {
   id: string;
   email: string;
@@ -20,3 +25,6 @@ export type Token = {
 };
 export type RegisterUserResponse = ApiResponse<{ user: User }>;
 export type VerifyEmailResponse = ApiResponse<{ user: User; tokens: Token }>;
+export type LoginUserResponse = VerifyEmailResponse;
+export type GetMeResponse = ApiResponse<{ user: User }>;
+export type RefreshTokenResponse = ApiResponse<TokenPair>;

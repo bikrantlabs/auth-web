@@ -1,15 +1,13 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { z } from "zod";
 
 import {
   clearPendingEmailCookie,
-  COOKIE_OPTIONS,
   getPendingEmailFromCookie,
-  VERIFICATION_CODE_TTL_SECONDS,
+  setSessionInCookie,
 } from "@/lib/_cookies";
 import { authApi } from "@/lib/api/auth.api";
 import { ApiError } from "@/lib/api/errors";
@@ -55,22 +53,12 @@ export async function verifyEmailAction(
   try {
     const res = await authApi.verifyEmail(parsed.data);
 
-    const jar = await cookies();
-
-    jar.set("access_token", res.data.tokens.accessToken, {
-      ...COOKIE_OPTIONS,
-      maxAge: VERIFICATION_CODE_TTL_SECONDS,
-    }); // 5 minutes
-    jar.set("refresh_token", res.data.tokens.refreshToken, {
-      ...COOKIE_OPTIONS,
-      maxAge: 24 * 60 * 60,
-    }); // 1 day
+    await setSessionInCookie(res.data.tokens, res.data.user);
 
     await clearPendingEmailCookie();
     redirect("/");
   } catch (error) {
     if (error instanceof ApiError) {
-      console.dir(error.body, { depth: null });
       return {
         success: error.body.success,
         message: error.body.error.message,

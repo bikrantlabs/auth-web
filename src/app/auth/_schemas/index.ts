@@ -25,3 +25,8 @@ export const verifyEmailSchema = z.object({
     .string({ error: "Code is required" })
     .regex(/^\d{6}$/, "Code must be exactly 6 digits"),
 });
+
+export const loginSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+});

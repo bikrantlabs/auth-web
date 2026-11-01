@@ -2,20 +2,52 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-export const COOKIE_OPTIONS = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
-  path: "/",
-};
+import type { Token, User } from "./api/response";
+import {
+  ACCESS_TOKEN_COOKIE_KEY,
+  ACCESS_TOKEN_MAX_AGE,
+  COOKIE_OPTIONS,
+  PENDING_EMAIL_COOKIE,
+  REFRESH_TOKEN_COOKIE_KEY,
+  REFRESH_TOKEN_MAX_AGE,
+  USER_COOKIE_KEY,
+  VERIFICATION_CODE_TTL_SECONDS,
+  VERIFICATION_RESEND_AVAILABLE_AT_COOKIE,
+  VERIFICATION_RESEND_COOLDOWN_SECONDS,
+} from "./cookie-config";
 
-export const VERIFICATION_CODE_TTL_SECONDS = 5 * 60;
+// Re-exported so existing `@/lib/_cookies` imports keep working.
+export * from "./cookie-config";
 
-export const VERIFICATION_RESEND_COOLDOWN_SECONDS = 30;
+export async function setSessionInCookie(tokens: Token, user: User) {
+  const jar = await cookies();
+  await setTokensInCookie(tokens);
+  jar.set(USER_COOKIE_KEY, JSON.stringify(user), {
+    ...COOKIE_OPTIONS,
+    maxAge: REFRESH_TOKEN_MAX_AGE,
+  });
+}
 
-const PENDING_EMAIL_COOKIE = "pending_email";
-const VERIFICATION_RESEND_AVAILABLE_AT_COOKIE =
-  "verification_resend_available_at";
+export async function setTokensInCookie(tokens: Token) {
+  const jar = await cookies();
+
+  jar.set(ACCESS_TOKEN_COOKIE_KEY, tokens.accessToken, {
+    ...COOKIE_OPTIONS,
+    maxAge: ACCESS_TOKEN_MAX_AGE,
+  });
+  jar.set(REFRESH_TOKEN_COOKIE_KEY, tokens.refreshToken, {
+    ...COOKIE_OPTIONS,
+    maxAge: REFRESH_TOKEN_MAX_AGE,
+  });
+}
+
+export async function clearSessionCookies() {
+  const jar = await cookies();
+
+  jar.delete(ACCESS_TOKEN_COOKIE_KEY);
+  jar.delete(REFRESH_TOKEN_COOKIE_KEY);
+  jar.delete(USER_COOKIE_KEY);
+}
 
 export async function setPendingEmailInCookie(email: string) {
   const jar = await cookies();

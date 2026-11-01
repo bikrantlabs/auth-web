@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 
 import { env } from "@/lib/env";
 
+import { ACCESS_TOKEN_COOKIE_KEY } from "../cookie-config";
 import { ApiError } from "./errors";
 
 type Query = Record<string, string | number | boolean | undefined | null>;
@@ -45,7 +46,7 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
     signal,
   } = opts;
 
-  const token = (await cookies()).get("token")?.value;
+  const token = (await cookies()).get(ACCESS_TOKEN_COOKIE_KEY)?.value;
   const isFormData = body instanceof FormData;
 
   const res = await fetch(buildUrl(path, query), {

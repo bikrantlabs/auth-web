@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useEffect } from "react";
 
 import { cn } from "cn";
@@ -8,9 +9,9 @@ import { toast } from "sonner";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
 
+import { registerUser } from "../_actions/register.action";
 import { FormSuccess } from "../_components/form-success";
 import { FieldError } from "../../components/field-error";
-import { registerUser } from "../_actions/register.action";
 
 export function RegisterForm() {
   const [state, formAction, isPending] = useActionState(registerUser, {});
@@ -59,7 +60,14 @@ export function RegisterForm() {
         )}
       </form>
 
-      <Button>Login</Button>
+      <div className="text-center">
+        <Link
+          href="/auth/login"
+          className="text-primary underline-offset-4 hover:underline"
+        >
+          Login
+        </Link>
+      </div>
     </div>
   );
 }

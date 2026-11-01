@@ -1,17 +1,8 @@
 import { z } from "zod";
 
-export type ApiErrorCode =
-  | "VALIDATION_ERROR"
-  | "BAD_REQUEST"
-  | "UNAUTHORIZED"
-  | "FORBIDDEN"
-  | "NOT_FOUND"
-  | "CONFLICT"
-  | "RATE_LIMIT_EXCEEDED"
-  | "INTERNAL_ERROR"
-  | "UNKNOWN_ERROR"
-  | "UNVERIFIED_USER"
-  | (string & {});
+// Add API specific error codes here to handle them accordingly in server actions.
+// If an API endpoint returns different unique error, we can simply use status codes.
+export type ApiErrorCode = "UNVERIFIED_USER" | (string & {});
 
 export type ApiFieldErrors = Record<string, string[]>;
 
